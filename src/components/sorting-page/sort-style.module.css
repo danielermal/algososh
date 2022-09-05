@@ -1,0 +1,16 @@
+.button {
+    width: 205px;
+}
+
+.button_new {
+    margin-left: 68px;
+    width: 205px;
+}
+
+.column_container {
+    margin: 48px auto 0;
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+    align-items: flex-end;
+}

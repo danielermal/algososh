@@ -35,3 +35,12 @@
     border: 4px solid #D252E1;
     border-radius: 40px;
 }
+
+.radio_container {
+    display: flex;
+    align-items: center;
+    column-gap: 40px;
+    border: none;
+    margin: 0 40px 0 0;
+    padding: 0;
+}

@@ -1,0 +1,37 @@
+.form {
+    margin: 48px auto 0;
+    display: flex;
+    column-gap: 12px;
+    justify-content: center;
+}
+
+.input {
+    transition: box-shadow .3s linear;
+    width: 377px;
+}
+
+.circle_container {
+    margin: 120px auto 0;
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 78px;
+    width: 100%;
+    justify-content: center;
+    max-width: 944px;
+    flex-wrap: wrap;
+}
+
+.circle_container_fib {
+    margin-top: 48px;
+}
+
+.circle_green {
+    border: 4px solid #7FE051;
+    border-radius: 40px;
+}
+
+.circle_purple {
+    border: 4px solid #D252E1;
+    border-radius: 40px;
+}

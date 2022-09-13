@@ -3,7 +3,6 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-
 import style from "./style.module.css";
 import { ElementStates } from "../../types/element-states";
 
@@ -52,6 +51,7 @@ export const StringComponent: React.FC = () => {
       });
       if (firstIndex + 1 === secondIndex || firstIndex === secondIndex) {
         setIndexes({ ...indexes, start: 99, end: -1, loading: false });
+        setValue("")
       }
     }, time);
   };
@@ -70,6 +70,7 @@ export const StringComponent: React.FC = () => {
           maxLength={11}
           isLimitText={true}
           onChange={changeHandler}
+          value={value}
         />
         <Button
           type="submit"

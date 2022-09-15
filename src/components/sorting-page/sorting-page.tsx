@@ -5,55 +5,28 @@ import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
 import { ElementStates } from "../../types/element-states";
 import { Column } from "../ui/column/column";
+import { IButtonsStatusSort } from "../../types/types";
+import { defaultButtonsStatusSort } from "./utils";
+import { disabledButtonsStatusSort } from "./utils";
+import { currentButtonsStatusSort } from "./utils";
 import style from "../string/style.module.css";
 import sortStyle from "./sort-style.module.css";
-
-interface IButtonsStatus {
-  newArray: {
-    disabled: boolean;
-  };
-  ascendingSort: {
-    disabled: boolean;
-    loading: boolean;
-  };
-  descendingSort: {
-    disabled: boolean;
-    loading: boolean;
-  };
-}
 
 export const SortingPage: React.FC = () => {
   const [state, setState] = React.useState<number[]>([]);
   const [sortNumber, setSortNumber] = React.useState<number>(-2);
   const [bubble, setBubble] = React.useState(false);
   const [nextNumber, setNextNumber] = React.useState<number>(-2);
-  const [buttonsStatus, setButtonsStatus] = React.useState<IButtonsStatus>({
-    newArray: {
-      disabled: false,
-    },
-    ascendingSort: {
-      disabled: true,
-      loading: false,
-    },
-    descendingSort: {
-      disabled: true,
-      loading: false,
-    },
-  });
+  const [buttonsStatus, setButtonsStatus] = React.useState<IButtonsStatusSort>(
+    defaultButtonsStatusSort
+  );
 
   const minusSort = () => {
     setButtonsStatus({
-      ...buttonsStatus,
+      ...disabledButtonsStatusSort,
       ascendingSort: {
         disabled: false,
         loading: true,
-      },
-      newArray: {
-        disabled: true,
-      },
-      descendingSort: {
-        disabled: true,
-        loading: false,
       },
     });
     bubble ? ascendingSortBubble([...state]) : ascendingSort([...state]);
@@ -61,14 +34,7 @@ export const SortingPage: React.FC = () => {
 
   const plusSort = () => {
     setButtonsStatus({
-      ...buttonsStatus,
-      ascendingSort: {
-        disabled: true,
-        loading: false,
-      },
-      newArray: {
-        disabled: true,
-      },
+      ...disabledButtonsStatusSort,
       descendingSort: {
         disabled: false,
         loading: true,
@@ -78,40 +44,38 @@ export const SortingPage: React.FC = () => {
   };
 
   React.useEffect(() => {
-    if (!bubble) {
-      if (sortNumber >= 0) {
-        let value = sortNumber;
-        setInterval(() => {
-          if (value < state.length - 1) {
-            value++;
-            setNextNumber(value);
-          }
-        }, 450);
-        if (sortNumber === state.length - 2) {
-          if (nextNumber === state.length - 1) {
-            setTimeout(() => {
-              setNextNumber(state.length);
-              setSortNumber(state.length);
-            }, 1500);
-          }
+    if (bubble) return;
+    if (sortNumber >= 0) {
+      let value = sortNumber;
+      setInterval(() => {
+        if (value < state.length - 1) {
+          value++;
+          setNextNumber(value);
+        }
+      }, 450);
+      if (sortNumber === state.length - 2) {
+        if (nextNumber === state.length - 1) {
+          setTimeout(() => {
+            setNextNumber(state.length);
+            setSortNumber(state.length);
+          }, 1500);
         }
       }
     }
   }, [sortNumber]);
 
   React.useEffect(() => {
-    if (bubble) {
-      if (sortNumber >= 0 && sortNumber < state.length) {
-        let value = 0;
-        setInterval(() => {
-          if (value < nextNumber) {
-            value++;
-            setSortNumber(value);
-          }
-        }, 500);
-      } else {
-        setNextNumber(20);
-      }
+    if (!bubble) return;
+    if (sortNumber >= 0 && sortNumber < state.length) {
+      let value = 0;
+      setInterval(() => {
+        if (value < nextNumber) {
+          value++;
+          setSortNumber(value);
+        }
+      }, 500);
+    } else {
+      setNextNumber(20);
     }
   }, [nextNumber, bubble]);
 
@@ -146,20 +110,7 @@ export const SortingPage: React.FC = () => {
         if (i < arr.length - 1) {
           sort();
         } else {
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
         }
       }, t);
     }
@@ -186,20 +137,7 @@ export const SortingPage: React.FC = () => {
         if (i < arr.length - 1) {
           sort();
         } else {
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
         }
       }, t);
     }
@@ -224,43 +162,16 @@ export const SortingPage: React.FC = () => {
         if (!swapped) {
           setNextNumber(-2);
           setSortNumber(-2);
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
           return;
         }
         i++;
         if (i < arr.length - 1) {
           sort();
-        }
-        else {
+        } else {
           setNextNumber(-2);
           setSortNumber(-2);
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
         }
       }, t);
     }
@@ -285,43 +196,16 @@ export const SortingPage: React.FC = () => {
         if (!swapped) {
           setNextNumber(-2);
           setSortNumber(-2);
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
           return;
         }
         i++;
         if (i < arr.length - 1) {
           sort();
-        }
-        else {
+        } else {
           setNextNumber(-2);
           setSortNumber(-2);
-          setButtonsStatus({
-            ...buttonsStatus,
-            ascendingSort: {
-              disabled: false,
-              loading: false,
-            },
-            newArray: {
-              disabled: false,
-            },
-            descendingSort: {
-              disabled: false,
-              loading: false,
-            },
-          });
+          setButtonsStatus(currentButtonsStatusSort);
         }
       }, t);
     }
@@ -339,30 +223,30 @@ export const SortingPage: React.FC = () => {
     if (!bubble) {
       setSortNumber(-2);
       setNextNumber(-2);
+    } else {
+      setSortNumber(-2);
+      setNextNumber(20);
     }
-    else {
-      setSortNumber(-2)
-      setNextNumber(20)
-    }
-    setButtonsStatus({
-      ...buttonsStatus,
-      ascendingSort: {
-        disabled: false,
-        loading: false,
-      },
-      newArray: {
-        disabled: false,
-      },
-      descendingSort: {
-        disabled: false,
-        loading: false,
-      },
-    });
+    setButtonsStatus(currentButtonsStatusSort);
     const length = getRandom(3, 17);
     const arr = Array.from<string | number>("0".repeat(length)).map(
       (item) => (item = getRandom(1, 100))
     );
     setState([...arr]);
+  };
+
+  const setColors = (index: number) => {
+    return !bubble
+      ? index < sortNumber
+        ? ElementStates.Modified
+        : index === sortNumber || index === nextNumber
+        ? ElementStates.Changing
+        : ElementStates.Default
+      : index === sortNumber || index === sortNumber + 1
+      ? ElementStates.Changing
+      : index <= nextNumber + 1
+      ? ElementStates.Default
+      : ElementStates.Modified;
   };
 
   return (
@@ -409,23 +293,7 @@ export const SortingPage: React.FC = () => {
       </form>
       <div className={sortStyle.column_container}>
         {state.map((item, index) => (
-          <Column
-            index={item}
-            key={index}
-            state={
-              !bubble
-                ? index < sortNumber
-                  ? ElementStates.Modified
-                  : index === sortNumber || index === nextNumber
-                  ? ElementStates.Changing
-                  : ElementStates.Default
-                : index === sortNumber || index === sortNumber + 1
-                ? ElementStates.Changing
-                : index <= nextNumber + 1
-                ? ElementStates.Default
-                : ElementStates.Modified
-            }
-          />
+          <Column index={item} key={index} state={setColors(index)} />
         ))}
       </div>
     </SolutionLayout>

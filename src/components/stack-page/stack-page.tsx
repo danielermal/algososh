@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -13,7 +13,7 @@ export const StackPage: React.FC = () => {
   const [newStack, setnewStack] = React.useState(true);
   const [color, setColor] = React.useState(false);
 
-  let stack = React.useMemo(() => {
+  const stack = React.useMemo(() => {
     return new Stack<string>();
   }, [newStack]);
 
@@ -27,7 +27,7 @@ export const StackPage: React.FC = () => {
     const resetForm = evt.target as HTMLFormElement;
     resetForm.reset();
     setInputValue("");
-    setState([...stack.container]);
+    setState([...stack.getStack()]);
     setColor(true);
     setTimeout(() => {
       setColor(false);
@@ -38,7 +38,7 @@ export const StackPage: React.FC = () => {
     setColor(true);
     setTimeout(() => {
       stack.pop();
-      setState([...stack.container]);
+      setState([...stack.getStack()]);
       setColor(false);
     }, 500);
   };

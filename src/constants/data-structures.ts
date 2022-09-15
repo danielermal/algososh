@@ -1,11 +1,10 @@
-interface IStack<T> {
-  push: (item: T) => void;
-  pop: () => void;
-  getSize: () => number;
-}
+import { IStack } from "../types/types";
+import { IQueue } from "../types/types";
+import { ILinkedItem } from "../types/types";
+import { ILinkedList } from "../types/types";
 
 export class Stack<T> implements IStack<T> {
-  container: T[] = [];
+  private container: T[] = [];
 
   push = (item: T): void => {
     this.container.push(item);
@@ -17,17 +16,17 @@ export class Stack<T> implements IStack<T> {
     }
   };
 
+  getStack() {
+    const arr = [];
+    for (let i of this.container) arr.push(i);
+    return arr;
+  }
+
   getSize = () => this.container.length;
 }
 
-interface IQueue<T> {
-  enqueue: (item: T) => void;
-  dequeue: () => void;
-  peak: () => T | null;
-}
-
 export class Queue<T> implements IQueue<T> {
-  container: (T | null)[] = [];
+  private container: (T | null)[] = [];
   head = 0;
   tail = 0;
   private readonly size: number = 0;
@@ -71,34 +70,26 @@ export class Queue<T> implements IQueue<T> {
     }
   };
 
+  getQueue() {
+    const arr = [];
+    for (let i of this.container) arr.push(i);
+    return arr;
+  }
+
   isEmpty = () => this.length === 0;
 }
 
-export class Node<T> {
+export class LinkedListNode<T> {
   value: T;
-  next: Node<T> | null;
-  constructor(value: T, next?: Node<T> | null) {
+  next: LinkedListNode<T> | null;
+  constructor(value: T, next?: LinkedListNode<T> | null) {
     this.value = value;
     this.next = next === undefined ? null : next;
   }
 }
 
-export interface ILinkedItem {
-  value: string;
-  up: React.ReactElement | null;
-  down: React.ReactElement | null;
-  next: boolean;
-}
-
-interface ILinkedList<T> {
-  append: (element: T) => void;
-  insertAt: (element: T, position: number) => void;
-  getSize: () => number;
-  print: () => void;
-}
-
 export class LinkedList<T> implements ILinkedList<T> {
-  private head: Node<T> | null;
+  private head: LinkedListNode<T> | null;
   private size: number;
   constructor() {
     this.head = null;
@@ -109,29 +100,28 @@ export class LinkedList<T> implements ILinkedList<T> {
     if (index < 0 || index >= this.size) {
       console.log("Enter a valid index");
       return;
-    } else {
-      const node = new Node(element);
-
-      if (index === 0) {
-        node.next = this.head;
-        this.head = node;
-      } else {
-        let curr = this.head;
-        let currIndex = 0;
-        while (currIndex < index - 1) {
-          curr = curr!.next;
-          currIndex++;
-        }
-        node.next = curr!.next;
-        curr!.next = node;
-      }
-
-      this.size++;
     }
+    const node = new LinkedListNode(element);
+
+    if (index === 0) {
+      node.next = this.head;
+      this.head = node;
+    } else {
+      let curr = this.head;
+      let currIndex = 0;
+      while (currIndex < index - 1) {
+        curr = curr!.next;
+        currIndex++;
+      }
+      node.next = curr!.next;
+      curr!.next = node;
+    }
+
+    this.size++;
   }
 
   append(element: T) {
-    const node = new Node(element);
+    const node = new LinkedListNode(element);
     let current;
 
     if (this.head === null) {
@@ -151,11 +141,7 @@ export class LinkedList<T> implements ILinkedList<T> {
     if (!this.head) {
       return null;
     }
-    if (this.head.next) {
-      this.head = this.head.next;
-    } else {
-      this.head = null;
-    }
+    this.head.next ? (this.head = this.head.next) : (this.head = null);
   }
 
   removeFrom(index: number) {
@@ -167,7 +153,7 @@ export class LinkedList<T> implements ILinkedList<T> {
       current = this.head;
       previous = current;
 
-      if (index == 0) {
+      if (index === 0) {
         this.head = current ? current.next : null;
       } else {
         while (it < index) {
@@ -193,7 +179,12 @@ export class LinkedList<T> implements ILinkedList<T> {
     while (curr) {
       res = [
         ...res,
-        { value: `${curr.value}`, next: curr.next ? true : false, down: null, up: null },
+        {
+          value: `${curr.value}`,
+          next: curr.next ? true : false,
+          down: null,
+          up: null,
+        },
       ];
       curr = curr.next;
     }

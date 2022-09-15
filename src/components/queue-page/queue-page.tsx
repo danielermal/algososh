@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -13,9 +13,9 @@ export const QueuePage: React.FC = () => {
   const [newStack, setnewStack] = React.useState(true);
   const [color, setColor] = React.useState({head: false, tail: false});
 
-  let queue = React.useMemo(() => {
+  const queue = React.useMemo(() => {
     const queue = new Queue<string>(7)
-    setState([...queue.container])
+    setState([...queue.getQueue()])
     return queue
   }, [newStack]);
 
@@ -29,7 +29,7 @@ export const QueuePage: React.FC = () => {
     const resetForm = evt.target as HTMLFormElement;
     resetForm.reset();
     setInputValue("");
-    setState([...queue.container]);
+    setState([...queue.getQueue()]);
     setColor({...color, tail: true});
     setTimeout(() => {
       setColor(prev => ({...prev, tail: false}));
@@ -40,7 +40,7 @@ export const QueuePage: React.FC = () => {
     setColor({...color, head: true});
     setTimeout(() => {
       queue.dequeue();
-      setState([...queue.container]);
+      setState([...queue.getQueue()]);
       setColor(prev => ({...prev, head: false}));
     }, 500);
   };

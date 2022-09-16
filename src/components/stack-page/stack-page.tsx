@@ -3,19 +3,19 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-import { Stack } from "../../constants/data-structures";
+import { Stack } from "./utils";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { ElementStates } from "../../types/element-states";
 import style from "../string/style.module.css";
 
 export const StackPage: React.FC = () => {
   const [state, setState] = React.useState<string[]>([]);
   const [inputValue, setInputValue] = React.useState<string>("");
-  const [newStack, setnewStack] = React.useState(true);
   const [color, setColor] = React.useState(false);
 
   const stack = React.useMemo(() => {
     return new Stack<string>();
-  }, [newStack]);
+  }, []);
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(evt.target.value);
@@ -27,25 +27,25 @@ export const StackPage: React.FC = () => {
     const resetForm = evt.target as HTMLFormElement;
     resetForm.reset();
     setInputValue("");
-    setState([...stack.getStack()]);
+    setState([...stack.elements()]);
     setColor(true);
     setTimeout(() => {
       setColor(false);
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const deleteElement = () => {
     setColor(true);
     setTimeout(() => {
       stack.pop();
-      setState([...stack.getStack()]);
+      setState([...stack.elements()]);
       setColor(false);
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const clearStack = () => {
+    stack.clear();
     setState([]);
-    setnewStack(!newStack);
   };
 
   return (

@@ -3,43 +3,39 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-import { fibonacci } from "./utils";
+import { fibonacci, MIN_VALUE, MAX_VALUE } from "./utils";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import style from "../string/style.module.css";
 
 export const FibonacciPage: React.FC = () => {
   const [value, setValue] = React.useState(0);
   const [fibArr, setFibArr] = React.useState<number[]>([]);
   const [loading, setLoading] = React.useState(false);
-  const minValue = 1
-  const maxValue = 19
 
   const submitHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setLoading(true);
-    setFibArr([])
+    setFibArr([]);
     const fibArr = fibonacci(value);
-    visualVibArr(fibArr)
+    visualVibArr(fibArr);
   };
 
   const visualVibArr = (arr: number[]): void => {
-    let i = 0
-    let t = 0
-    function recursion () {
+    let i = 0;
+    function recursion() {
       setTimeout(() => {
         if (i >= arr.length) {
-          setLoading(false)
-          return
+          setLoading(false);
+          return;
+        } else {
+          setFibArr((prev) => [...prev, arr[i]]);
+          i++;
+          recursion();
         }
-        else {
-          setFibArr(prev => [...prev, arr[i]])
-          i++
-          t+=500
-          recursion()
-        }
-      }, 500)
+      }, SHORT_DELAY_IN_MS);
     }
-    recursion()
-  }
+    recursion();
+  };
 
   const changeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(evt.target.value);
@@ -52,7 +48,7 @@ export const FibonacciPage: React.FC = () => {
         <Input
           type="number"
           extraClass={style.input}
-          max={19}
+          max={MAX_VALUE}
           isLimitText={true}
           onChange={changeHandler}
           placeholder="Введите число"
@@ -60,7 +56,7 @@ export const FibonacciPage: React.FC = () => {
         <Button
           type="submit"
           text="Рассчитать"
-          disabled={!(value >= minValue && value <= maxValue)}
+          disabled={value < MIN_VALUE || value > MAX_VALUE}
           isLoader={loading}
         />
       </form>

@@ -4,20 +4,21 @@ import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import style from "./style.module.css";
+import { MIN_VALUE, MAX_VALUE } from "./utils";
 import { ElementStates } from "../../types/element-states";
 
 export const StringComponent: React.FC = () => {
   const [value, setValue] = React.useState("");
   const [state, setState] = React.useState<string[]>([]);
   const [indexes, setIndexes] = React.useState({
-    start: -1,
-    end: 99,
+    start: MIN_VALUE,
+    end: MAX_VALUE,
     loading: false,
   });
 
   const submitHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    setIndexes({ ...indexes, start: -1, end: 99, loading: true });
+    setIndexes({ ...indexes, start: MIN_VALUE, end: MAX_VALUE, loading: true });
     let start = 0;
     let end = value.length - 1;
     let time = 1000;
@@ -50,7 +51,7 @@ export const StringComponent: React.FC = () => {
         loading: true,
       });
       if (firstIndex + 1 === secondIndex || firstIndex === secondIndex) {
-        setIndexes({ ...indexes, start: 99, end: -1, loading: false });
+        setIndexes({ ...indexes, start: MAX_VALUE, end: MIN_VALUE, loading: false });
         setValue("")
       }
     }, time);

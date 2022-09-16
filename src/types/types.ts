@@ -26,31 +26,33 @@ export interface IButtonsStatus {
 }
 
 export interface IButtonsStatusSort {
-    newArray: {
-      disabled: boolean;
-    };
-    ascendingSort: {
-      disabled: boolean;
-      loading: boolean;
-    };
-    descendingSort: {
-      disabled: boolean;
-      loading: boolean;
-    };
-  }
+  newArray: {
+    disabled: boolean;
+  };
+  ascendingSort: {
+    disabled: boolean;
+    loading: boolean;
+  };
+  descendingSort: {
+    disabled: boolean;
+    loading: boolean;
+  };
+}
 
 export interface IStack<T> {
   push: (item: T) => void;
   pop: () => void;
   getSize: () => number;
-  getStack: () => (T | null)[]
+  elements: () => (T | null)[];
+  clear: () => void;
 }
 
 export interface IQueue<T> {
   enqueue: (item: T) => void;
   dequeue: () => void;
   peak: () => T | null;
-  getQueue: () => (T | null)[]
+  elements: () => (T | null)[];
+  clear: () => void;
 }
 
 export interface ILinkedItem {
@@ -62,7 +64,10 @@ export interface ILinkedItem {
 
 export interface ILinkedList<T> {
   append: (element: T) => void;
-  insertAt: (element: T, position: number) => void;
+  prepend: (element: T) => void;
+  addByIndex: (element: T, position: number) => void;
+  deleteByIndex: (index: number) => void;
+  deleteHead: () => void;
   getSize: () => number;
   print: () => void;
 }

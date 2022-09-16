@@ -9,6 +9,8 @@ import { IButtonsStatusSort } from "../../types/types";
 import { defaultButtonsStatusSort } from "./utils";
 import { disabledButtonsStatusSort } from "./utils";
 import { currentButtonsStatusSort } from "./utils";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { DELAY_IN_MS } from "../../constants/delays";
 import style from "../string/style.module.css";
 import sortStyle from "./sort-style.module.css";
 
@@ -52,14 +54,12 @@ export const SortingPage: React.FC = () => {
           value++;
           setNextNumber(value);
         }
-      }, 450);
-      if (sortNumber === state.length - 2) {
-        if (nextNumber === state.length - 1) {
-          setTimeout(() => {
-            setNextNumber(state.length);
-            setSortNumber(state.length);
-          }, 1500);
-        }
+      }, SHORT_DELAY_IN_MS);
+      if (sortNumber === state.length - 2 && nextNumber === state.length - 1) {
+        setTimeout(() => {
+          setNextNumber(state.length);
+          setSortNumber(state.length);
+        }, DELAY_IN_MS);
       }
     }
   }, [sortNumber]);
@@ -73,7 +73,7 @@ export const SortingPage: React.FC = () => {
           value++;
           setSortNumber(value);
         }
-      }, 500);
+      }, SHORT_DELAY_IN_MS);
     } else {
       setNextNumber(20);
     }
@@ -92,12 +92,12 @@ export const SortingPage: React.FC = () => {
 
   const ascendingSort = (arr: number[]) => {
     let i = 0;
-    let t = 500 * arr.length;
+    let t = SHORT_DELAY_IN_MS * arr.length;
     function sort() {
       setSortNumber(i);
       setTimeout(() => {
         let minInd = i;
-        t = 500 * (arr.length - i);
+        t = SHORT_DELAY_IN_MS * (arr.length - i);
         for (let j = i + 1; j < arr.length; j++) {
           if (arr[minInd] > arr[j]) {
             minInd = j;
@@ -119,12 +119,12 @@ export const SortingPage: React.FC = () => {
 
   const descendingSort = (arr: number[]) => {
     let i = 0;
-    let t = 500 * arr.length;
+    let t = SHORT_DELAY_IN_MS * arr.length;
     function sort() {
       setSortNumber(i);
       setTimeout(() => {
         let maxInd = i;
-        t = 499 * (arr.length - i);
+        t = SHORT_DELAY_IN_MS * (arr.length - i);
         for (let j = i + 1; j < arr.length; j++) {
           if (arr[maxInd] < arr[j]) {
             maxInd = j;
@@ -146,12 +146,12 @@ export const SortingPage: React.FC = () => {
 
   const ascendingSortBubble = (arr: number[]) => {
     let i = 0;
-    let t = 500 * arr.length;
+    let t = SHORT_DELAY_IN_MS * arr.length;
     function sort() {
       setSortNumber(0);
       setNextNumber(arr.length - i - 2);
       setTimeout(() => {
-        t = 500 * (arr.length - i);
+        t = SHORT_DELAY_IN_MS * (arr.length - i);
         let swapped = false;
         for (let j = 0; j < arr.length - i - 1; j++) {
           if (arr[j] > arr[j + 1]) {
@@ -180,12 +180,12 @@ export const SortingPage: React.FC = () => {
 
   const descendingSortBubble = (arr: number[]) => {
     let i = 0;
-    let t = 500 * arr.length;
+    let t = SHORT_DELAY_IN_MS * arr.length;
     function sort() {
       setSortNumber(0);
       setNextNumber(arr.length - i - 2);
       setTimeout(() => {
-        t = 500 * (arr.length - i);
+        t = SHORT_DELAY_IN_MS * (arr.length - i);
         let swapped = false;
         for (let j = 0; j < arr.length - i - 1; j++) {
           if (arr[j] < arr[j + 1]) {
@@ -212,7 +212,7 @@ export const SortingPage: React.FC = () => {
     sort();
   };
 
-  function getRandom(min: number, max: number): number {
+  const getRandom = (min: number, max: number): number => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;

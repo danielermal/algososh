@@ -3,21 +3,21 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-import { Queue } from "../../constants/data-structures";
+import { Queue } from "./utils";
 import { ElementStates } from "../../types/element-states";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import style from "../string/style.module.css";
 
 export const QueuePage: React.FC = () => {
   const [state, setState] = React.useState<(string | null)[]>([]);
   const [inputValue, setInputValue] = React.useState<string>("");
-  const [newStack, setnewStack] = React.useState(true);
   const [color, setColor] = React.useState({head: false, tail: false});
 
   const queue = React.useMemo(() => {
     const queue = new Queue<string>(7)
-    setState([...queue.getQueue()])
+    setState([...queue.elements()])
     return queue
-  }, [newStack]);
+  }, []);
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(evt.target.value);
@@ -29,25 +29,25 @@ export const QueuePage: React.FC = () => {
     const resetForm = evt.target as HTMLFormElement;
     resetForm.reset();
     setInputValue("");
-    setState([...queue.getQueue()]);
+    setState([...queue.elements()]);
     setColor({...color, tail: true});
     setTimeout(() => {
       setColor(prev => ({...prev, tail: false}));
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const deleteElement = () => {
     setColor({...color, head: true});
     setTimeout(() => {
       queue.dequeue();
-      setState([...queue.getQueue()]);
+      setState([...queue.elements()]);
       setColor(prev => ({...prev, head: false}));
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const clearStack = () => {
-    setState([]);
-    setnewStack(!newStack);
+    queue.clear()
+    setState([...queue.elements()]);    
   };
 
   return (

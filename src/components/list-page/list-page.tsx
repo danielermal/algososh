@@ -4,21 +4,28 @@ import { Button } from "../ui/button/button";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
-import { LinkedList } from "../../constants/data-structures";
 import { ElementStates } from "../../types/element-states";
 import { ILinkedItem } from "../../types/types";
 import { IButtonsStatus } from "../../types/types";
-import { defaultButtonsStatus } from "./utils";
-import { disabledButtonsStatus } from "./utils";
+import {
+  defaultButtonsStatus,
+  disabledButtonsStatus,
+  LinkedList,
+} from "./utils";
+import { DELAY_IN_MS } from "../../constants/delays";
 import { Circle } from "../ui/circle/circle";
 
 export const ListPage: React.FC = () => {
   const [value, setValue] = React.useState("");
   const [index, setIndex] = React.useState("");
   const [state, setState] = React.useState<ILinkedItem[]>([]);
-  const [color, setColor] = React.useState({ index: 0, color: false });
+  const [colorState, setColorState] = React.useState({
+    index: 0,
+    color: false,
+  });
   const [moveIndex, setMoveIndex] = React.useState(-1);
-  const [buttonsStatus, setButtonsStatus] = React.useState<IButtonsStatus>(defaultButtonsStatus)
+  const [buttonsStatus, setButtonsStatus] =
+    React.useState<IButtonsStatus>(defaultButtonsStatus);
 
   const linkedList = React.useMemo(() => {
     const list = new LinkedList<string>();
@@ -41,58 +48,71 @@ export const ListPage: React.FC = () => {
   const addAnimation = (index: number): void => {
     setTimeout(() => {
       setState([...linkedList.print()]);
-      setColor({ index: index, color: true });
-      setTimeout(() => {        
-        setColor({ index: index, color: false });
+      setColorState({ index: index, color: true });
+      setTimeout(() => {
+        setColorState({ index: index, color: false });
         setValue("");
-        setButtonsStatus(defaultButtonsStatus)
-      }, 1000);
-    }, 1000);    
-  }
+        setButtonsStatus(defaultButtonsStatus);
+      }, DELAY_IN_MS);
+    }, DELAY_IN_MS);
+  };
 
   const deleteAnimation = () => {
     setTimeout(() => {
       setState([...linkedList.print()]);
-      setButtonsStatus(defaultButtonsStatus)
-    }, 1000);
-  }
+      setButtonsStatus(defaultButtonsStatus);
+    }, DELAY_IN_MS);
+  };
 
   const addInHead = () => {
-    linkedList.insertAt(value, 0);
-    state[0] = {
+    linkedList.prepend(value);
+    const head = {
       ...state[0],
       up: (
         <Circle letter={value} state={ElementStates.Changing} isSmall={true} />
       ),
     };
-    setButtonsStatus({...disabledButtonsStatus, addInHead: {
-      disabled: false,
-      loading: true,
-    }})
-    addAnimation(0)
+    const arr = state.filter((item, index) => index !== 0);
+    setState([head, ...arr]);
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      addInHead: {
+        disabled: false,
+        loading: true,
+      },
+    });
+    addAnimation(0);
   };
 
   const addInTail = () => {
     linkedList.append(value);
-    state[state.length - 1] = {
+    const tail = {
       ...state[state.length - 1],
       up: (
         <Circle letter={value} state={ElementStates.Changing} isSmall={true} />
       ),
     };
-    setButtonsStatus({...disabledButtonsStatus, addInTail: {
-      disabled: false,
-      loading: true,
-    }})
-    addAnimation(state.length)
+    const arr = state.filter((item, index) => index !== state.length - 1);
+    setState([...arr, tail]);
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      addInTail: {
+        disabled: false,
+        loading: true,
+      },
+    });
+    addAnimation(state.length);
   };
 
   const deleteInHead = () => {
     linkedList.deleteHead();
-    setButtonsStatus({...disabledButtonsStatus, deleteInHead: {
-      disabled: false,
-      loading: true,
-    },})
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      deleteInHead: {
+        disabled: false,
+        loading: true,
+      },
+    });
     const head = {
       ...state[0],
       down: (
@@ -111,15 +131,18 @@ export const ListPage: React.FC = () => {
       }
     }
     setState([head, ...list]);
-    deleteAnimation()
+    deleteAnimation();
   };
 
   const deleteInTail = () => {
-    linkedList.removeFrom(state.length - 1);
-    setButtonsStatus({...disabledButtonsStatus, deleteInTail: {
-      disabled: false,
-      loading: true,
-    }})
+    linkedList.deleteByIndex(state.length - 1);
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      deleteInTail: {
+        disabled: false,
+        loading: true,
+      },
+    });
     const tail = {
       ...state[state.length - 1],
       down: (
@@ -138,7 +161,7 @@ export const ListPage: React.FC = () => {
       }
     }
     setState([...list, tail]);
-    deleteAnimation()
+    deleteAnimation();
   };
 
   const addByIndex = () => {
@@ -147,59 +170,57 @@ export const ListPage: React.FC = () => {
     }
     if (Number(index) >= state.length) {
       return;
-    } else {
-      setButtonsStatus({...disabledButtonsStatus, addByIndex: {
+    }
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      addByIndex: {
         disabled: false,
         loading: true,
-      }})
-      linkedList.insertAt(value, Number(index));
-      let i = 0;
-      let t = 0;
-      function moving() {
-        setTimeout(() => {
-          t = 1000;
-          const arr = [];
-          const item = {
-            ...state[i],
-            up: (
-              <Circle
-                letter={value}
-                state={ElementStates.Changing}
-                isSmall={true}
-              />
-            ),
-          };
-          for (let j of state) {
-            if (state[i] !== j) {
-              arr.push(j);
-            } else {
-              arr.push(item);
-            }
-          }
-          setState([...arr]);
-          if (i < Number(index)) {
-            setTimeout(() => {
-              setMoveIndex(i - 1);
-            }, 1000);
-          }
-          i++;
-          if (i <= Number(index) + 1) {
-            moving();
-          } else {
-            setState([...linkedList.print()]);
-            setColor({ index: i - 2, color: true });
-            setMoveIndex(-1);
-            setTimeout(() => {
-              setColor({ index: i - 2, color: false });
-              setButtonsStatus(defaultButtonsStatus)
-              setValue("");
-              setIndex("");
-            }, 1000);
-          }
-        }, t);
-      }
-      moving();
+      },
+    });
+    linkedList.addByIndex(value, Number(index));
+    let i = 0;
+    let t = 0;
+    function moving() {
+      setTimeout(() => {
+        t = DELAY_IN_MS;
+        const arr = [];
+        const item = {
+          ...state[i],
+          up: (
+            <Circle
+              letter={value}
+              state={ElementStates.Changing}
+              isSmall={true}
+            />
+          ),
+        };
+        for (let j of state) {
+          arr.push(state[i] !== j ? j : item);
+        }
+        setState([...arr]);
+        if (i < Number(index)) {
+          setTimeout(() => {
+            setMoveIndex(i - 1);
+          }, DELAY_IN_MS);
+        }
+        i++;
+        if (i <= Number(index) + 1) {
+          moving();
+        } else {
+          setState([...linkedList.print()]);
+          setColorState({ index: i - 2, color: true });
+          setMoveIndex(-1);
+          setTimeout(() => {
+            setColorState({ index: i - 2, color: false });
+            setButtonsStatus(defaultButtonsStatus);
+            setValue("");
+            setIndex("");
+          }, DELAY_IN_MS);
+        }
+      }, t);
     }
+    moving();
   };
 
   const removeByIndex = () => {
@@ -208,57 +229,55 @@ export const ListPage: React.FC = () => {
     }
     if (Number(index) >= state.length) {
       return;
-    } else {
-      setButtonsStatus({...disabledButtonsStatus, deleteByIndex: {
+    }
+    setButtonsStatus({
+      ...disabledButtonsStatus,
+      deleteByIndex: {
         disabled: false,
         loading: true,
-      }})
-      linkedList.removeFrom(Number(index));
-      let i = 0;
-      setMoveIndex(i);
-      function moving() {
-        setTimeout(() => {
-          setMoveIndex(i + 1);
-          i++;
-          if (i <= Number(index) - 1) {
-            moving();
-          } else {
+      },
+    });
+    linkedList.deleteByIndex(Number(index));
+    let i = 0;
+    setMoveIndex(i);
+    function moving() {
+      setTimeout(() => {
+        setMoveIndex(i + 1);
+        i++;
+        if (i <= Number(index) - 1) {
+          moving();
+        } else {
+          setTimeout(() => {
+            const arr = [];
+            const item = {
+              ...state[i - 1],
+              down: (
+                <Circle
+                  letter={state[i].value}
+                  state={ElementStates.Changing}
+                  isSmall={true}
+                />
+              ),
+              value: "",
+              next: Number(index) === state.length - 1 ? false : true,
+            };
+            for (let j of state) {
+              arr.push(state[i] !== j ? j : item);
+            }
+            setState([...arr]);
+            setMoveIndex(i - 1);
             setTimeout(() => {
-              const arr = [];
-              const item = {
-                ...state[i - 1],
-                down: (
-                  <Circle
-                    letter={state[i].value}
-                    state={ElementStates.Changing}
-                    isSmall={true}
-                  />
-                ),
-                value: "",
-                next: Number(index) === state.length - 1 ? false : true,
-              };
-              for (let j of state) {
-                if (state[i] !== j) {
-                  arr.push(j);
-                } else {
-                  arr.push(item);
-                }
-              }
-              setState([...arr]);
-              setMoveIndex(i - 1);
-              setTimeout(() => {
-                setState([...linkedList.print()]);
-                setButtonsStatus(defaultButtonsStatus)
-                setMoveIndex(-1);
-                setValue("");
-                setIndex("");
-              }, 1000);
-            }, 1000);
-          }
-        }, 1000);
-      }
-      moving();
+              setState([...linkedList.print()]);
+              setButtonsStatus(defaultButtonsStatus);
+              setMoveIndex(-1);
+              setValue("");
+              setIndex("");
+            }, DELAY_IN_MS);
+          }, DELAY_IN_MS);
+        }
+      }, DELAY_IN_MS);
     }
+    moving();
   };
 
   return (
@@ -322,7 +341,10 @@ export const ListPage: React.FC = () => {
             text="Добавить по индексу"
             type="button"
             onClick={addByIndex}
-            disabled={!(index.length > 0 && value.length > 0) || buttonsStatus.addByIndex.disabled}
+            disabled={
+              !(index.length > 0 && value.length > 0) ||
+              buttonsStatus.addByIndex.disabled
+            }
             isLoader={buttonsStatus.addByIndex.loading}
           />
           <Button
@@ -330,7 +352,9 @@ export const ListPage: React.FC = () => {
             text="Удалить по индексу"
             type="button"
             onClick={removeByIndex}
-            disabled={!(index.length > 0) || buttonsStatus.deleteByIndex.disabled}
+            disabled={
+              !(index.length > 0) || buttonsStatus.deleteByIndex.disabled
+            }
             isLoader={buttonsStatus.deleteByIndex.loading}
           />
         </fieldset>
@@ -346,7 +370,7 @@ export const ListPage: React.FC = () => {
                 item.down ? item.down : index === state.length - 1 ? "tail" : ""
               }
               state={
-                index === color.index && color.color
+                index === colorState.index && colorState.color
                   ? ElementStates.Modified
                   : index <= moveIndex
                   ? ElementStates.Changing

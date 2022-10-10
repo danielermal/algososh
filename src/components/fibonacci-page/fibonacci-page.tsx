@@ -44,7 +44,7 @@ export const FibonacciPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
-      <form className={style.form} onSubmit={submitHandler}>
+      <form className={style.form} onSubmit={submitHandler} name={"fibonacci-form"}>
         <Input
           type="number"
           extraClass={style.input}

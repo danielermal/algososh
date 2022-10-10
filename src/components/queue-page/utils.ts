@@ -58,5 +58,9 @@ export class Queue<T> implements IQueue<T> {
     this.length = 0;
   };
 
+  checkElements = () => {
+    return this.container.every(item => item === (null || undefined))
+  }
+
   isEmpty = () => this.length === 0;
 }

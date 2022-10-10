@@ -11,12 +11,12 @@ import style from "../string/style.module.css";
 export const QueuePage: React.FC = () => {
   const [state, setState] = React.useState<(string | null)[]>([]);
   const [inputValue, setInputValue] = React.useState<string>("");
-  const [color, setColor] = React.useState({head: false, tail: false});
+  const [color, setColor] = React.useState({ head: false, tail: false });
 
   const queue = React.useMemo(() => {
-    const queue = new Queue<string>(7)
-    setState([...queue.elements()])
-    return queue
+    const queue = new Queue<string>(7);
+    setState([...queue.elements()]);
+    return queue;
   }, []);
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,29 +25,29 @@ export const QueuePage: React.FC = () => {
 
   const addElement = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    queue.enqueue(inputValue)
+    queue.enqueue(inputValue);
     const resetForm = evt.target as HTMLFormElement;
     resetForm.reset();
     setInputValue("");
     setState([...queue.elements()]);
-    setColor({...color, tail: true});
+    setColor({ ...color, tail: true });
     setTimeout(() => {
-      setColor(prev => ({...prev, tail: false}));
+      setColor((prev) => ({ ...prev, tail: false }));
     }, SHORT_DELAY_IN_MS);
   };
 
   const deleteElement = () => {
-    setColor({...color, head: true});
+    setColor({ ...color, head: true });
     setTimeout(() => {
       queue.dequeue();
       setState([...queue.elements()]);
-      setColor(prev => ({...prev, head: false}));
+      setColor((prev) => ({ ...prev, head: false }));
     }, SHORT_DELAY_IN_MS);
   };
 
   const clearStack = () => {
-    queue.clear()
-    setState([...queue.elements()]);    
+    queue.clear();
+    setState([...queue.elements()]);
   };
 
   return (
@@ -60,6 +60,7 @@ export const QueuePage: React.FC = () => {
           isLimitText={true}
           placeholder="Введите значение"
           onChange={handleChange}
+          name="queue"
         />
         <Button
           text="Добавить"
@@ -69,7 +70,7 @@ export const QueuePage: React.FC = () => {
         <Button
           text="Удалить"
           type="button"
-          disabled={!(state.length > 0)}
+          disabled={queue.checkElements()}
           onClick={deleteElement}
         />
         <Button
@@ -77,7 +78,7 @@ export const QueuePage: React.FC = () => {
           extraClass={style.button_clear}
           type="button"
           onClick={clearStack}
-          disabled={!(state.length > 0)}
+          disabled={queue.isEmpty()}
         />
       </form>
       <div
@@ -85,12 +86,17 @@ export const QueuePage: React.FC = () => {
       >
         {state.map((item, index) => (
           <Circle
-            letter={item ? item : ''}
+            letter={item ? item : ""}
             index={index}
             key={index}
-            head={(index === queue.head && state[index]) ? "head" : ''}
-            tail={(index === queue.tail - 1 && state[index]) ? "tail" : ''}
-            state={((index === queue.head && color.head) || (index === queue.tail - 1 && color.tail)) ? ElementStates.Changing : ElementStates.Default}
+            head={index === queue.head && state[index] ? "head" : ""}
+            tail={index === queue.tail - 1 && state[index] ? "tail" : ""}
+            state={
+              (index === queue.head && color.head) ||
+              (index === queue.tail - 1 && color.tail)
+                ? ElementStates.Changing
+                : ElementStates.Default
+            }
           />
         ))}
       </div>

@@ -5,6 +5,7 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import style from "./style.module.css";
 import { MIN_VALUE, MAX_VALUE } from "./utils";
+import { reverseString } from "./utils";
 import { ElementStates } from "../../types/element-states";
 
 export const StringComponent: React.FC = () => {
@@ -24,9 +25,10 @@ export const StringComponent: React.FC = () => {
     let time = 1000;
     const arr = [...value];
     setState(arr);
+    const reverseArr = [...reverseString(value)]
     setTimeout(() => {
       while (start <= end) {
-        swap(arr, start, end, time);
+        swap(arr, reverseArr, start, end, time);
         start++;
         end--;
         time += 1000;
@@ -36,14 +38,14 @@ export const StringComponent: React.FC = () => {
 
   const swap = (
     arr: string[],
+    reverseArr: string[],
     firstIndex: number,
     secondIndex: number,
     time: number
   ): void => {
     setTimeout(() => {
-      const temp = arr[firstIndex];
-      arr[firstIndex] = arr[secondIndex];
-      arr[secondIndex] = temp;
+      arr[firstIndex] = reverseArr[firstIndex];
+      arr[secondIndex] = reverseArr[secondIndex];
       setIndexes({
         ...indexes,
         start: firstIndex + 1,
@@ -72,6 +74,7 @@ export const StringComponent: React.FC = () => {
           isLimitText={true}
           onChange={changeHandler}
           value={value}
+          name={"string"}
         />
         <Button
           type="submit"
@@ -80,7 +83,7 @@ export const StringComponent: React.FC = () => {
           isLoader={indexes.loading}
         />
       </form>
-      <div className={style.circle_container}>
+      <div className={style.circle_container} >
         {state.map((item, index) => {
           return (
             <Circle
@@ -92,7 +95,7 @@ export const StringComponent: React.FC = () => {
                   : index > indexes.start && index < indexes.end
                   ? ElementStates.Default
                   : ElementStates.Modified
-              }
+              }          
             />
           );
         })}

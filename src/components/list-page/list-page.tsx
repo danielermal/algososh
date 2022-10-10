@@ -292,6 +292,7 @@ export const ListPage: React.FC = () => {
             extraClass={style.input}
             onChange={changeValue}
             value={value}
+            name={"list"}
           />
           <Button
             linkedList="small"
@@ -335,6 +336,7 @@ export const ListPage: React.FC = () => {
             max={state.length - 1}
             value={index}
             isLimitText={true}
+            name={"index"}
           />
           <Button
             linkedList="big"

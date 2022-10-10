@@ -52,6 +52,7 @@ export const FibonacciPage: React.FC = () => {
           isLimitText={true}
           onChange={changeHandler}
           placeholder="Введите число"
+          name="fibonacci"
         />
         <Button
           type="submit"

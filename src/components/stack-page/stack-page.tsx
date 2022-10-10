@@ -58,6 +58,7 @@ export const StackPage: React.FC = () => {
           isLimitText={true}
           placeholder="Введите текст"
           onChange={handleChange}
+          name="stack"
         />
         <Button
           text="Добавить"

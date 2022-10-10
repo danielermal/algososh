@@ -29,7 +29,6 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://danielermal.github.io/algososh/",
   "eslintConfig": {
     "extends": [
       "react-app",
